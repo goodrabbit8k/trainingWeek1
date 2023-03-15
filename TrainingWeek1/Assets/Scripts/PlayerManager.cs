@@ -1,17 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public static PlayerManager instance { get; private set; }
+    public event EventHandler <ChangeSelectedCounterEventArgs> ChangeSelectedCounterEvent;
+    public class ChangeSelectedCounterEventArgs : EventArgs
+    {
+        public ClearCounterManager clearCounterSelect;
+    }
+
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] LayerMask clearCounterMask;
 
     PlayerInput gameInput;
+    ClearCounterManager clearCounterSelect;
 
     Vector3 playerLastInteractDir;
+    
 
     bool isMoving = false;
+
+    void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {
@@ -22,22 +37,9 @@ public class PlayerManager : MonoBehaviour
 
     private void GameInput_interactionEvent(object sender, System.EventArgs e)
     {
-        Vector2 inputVector = gameInput.GetMovement();
-        Vector3 movementDir = new Vector3(inputVector.x, 0f, inputVector.y);
-
-        float playerInteractDistance = 2f;
-
-        if (movementDir != Vector3.zero)
+        if (clearCounterSelect != null)
         {
-            playerLastInteractDir = movementDir;
-        }
-
-        if (Physics.Raycast(transform.position, playerLastInteractDir, out RaycastHit hitInfo, playerInteractDistance, clearCounterMask))
-        {
-            if (hitInfo.transform.TryGetComponent(out ClearCounterManager clearCounterManager))
-            {
-                clearCounterManager.Interact();
-            }
+            clearCounterSelect.Interact();
         }
     }
 
@@ -57,7 +59,7 @@ public class PlayerManager : MonoBehaviour
         Vector2 inputVector = gameInput.GetMovement();
         Vector3 movementDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
-        float playerInteractDistance = 2f;
+        float playerInteractDistance = 1f;
 
         if (movementDir != Vector3.zero)
         {
@@ -68,9 +70,22 @@ public class PlayerManager : MonoBehaviour
         {
             if (hitInfo.transform.TryGetComponent(out ClearCounterManager clearCounterManager))
             {
-                
+                if (clearCounterManager != clearCounterSelect)
+                {
+                    SelectedCounter(clearCounterManager);
+                }
+            }
+            else
+            {
+                SelectedCounter(null);
             }
         }
+        else
+        {
+            SelectedCounter(null);
+        }
+
+        Debug.Log(clearCounterSelect);
     }
     void PlayerMovement()
     {
@@ -111,5 +126,12 @@ public class PlayerManager : MonoBehaviour
         }
 
         transform.forward = Vector3.Slerp(transform.forward, movementDir, Time.deltaTime * rotationSpeed);
+    }
+
+    void SelectedCounter(ClearCounterManager clearCounterSelect)
+    {
+        this.clearCounterSelect = clearCounterSelect;
+
+        ChangeSelectedCounterEvent?.Invoke(this, new ChangeSelectedCounterEventArgs { clearCounterSelect = clearCounterSelect });
     }
 }
