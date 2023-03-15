@@ -5,17 +5,74 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 5.0f;
+    [SerializeField] LayerMask clearCounterMask;
 
     PlayerInput gameInput;
+
+    Vector3 playerLastInteractDir;
 
     bool isMoving = false;
 
     void Start()
     {
         gameInput = GameObject.Find("GameInput").GetComponent<PlayerInput>();
+
+        gameInput.interactionEvent += GameInput_interactionEvent;
+    }
+
+    private void GameInput_interactionEvent(object sender, System.EventArgs e)
+    {
+        Vector2 inputVector = gameInput.GetMovement();
+        Vector3 movementDir = new Vector3(inputVector.x, 0f, inputVector.y);
+
+        float playerInteractDistance = 2f;
+
+        if (movementDir != Vector3.zero)
+        {
+            playerLastInteractDir = movementDir;
+        }
+
+        if (Physics.Raycast(transform.position, playerLastInteractDir, out RaycastHit hitInfo, playerInteractDistance, clearCounterMask))
+        {
+            if (hitInfo.transform.TryGetComponent(out ClearCounterManager clearCounterManager))
+            {
+                clearCounterManager.Interact();
+            }
+        }
     }
 
     void Update()
+    {
+        PlayerInteraction();
+        PlayerMovement();
+    }
+
+    public bool IsMoving()
+    {
+        return isMoving;
+    }
+
+    void PlayerInteraction()
+    {
+        Vector2 inputVector = gameInput.GetMovement();
+        Vector3 movementDir = new Vector3(inputVector.x, 0f, inputVector.y);
+
+        float playerInteractDistance = 2f;
+
+        if (movementDir != Vector3.zero)
+        {
+            playerLastInteractDir = movementDir;
+        }
+
+        if (Physics.Raycast(transform.position, playerLastInteractDir, out RaycastHit hitInfo, playerInteractDistance, clearCounterMask))
+        {
+            if (hitInfo.transform.TryGetComponent(out ClearCounterManager clearCounterManager))
+            {
+                
+            }
+        }
+    }
+    void PlayerMovement()
     {
         Vector2 inputVector = gameInput.GetMovement();
         Vector3 movementDir = new Vector3(inputVector.x, 0, inputVector.y);
@@ -45,13 +102,8 @@ public class PlayerManager : MonoBehaviour
                 {
                     movementDir = movementDirZ;
                 }
-                else
-                {
-
-                }
             }
         }
-        
 
         if (canMove)
         {
@@ -59,10 +111,5 @@ public class PlayerManager : MonoBehaviour
         }
 
         transform.forward = Vector3.Slerp(transform.forward, movementDir, Time.deltaTime * rotationSpeed);
-    }
-
-    public bool IsMoving()
-    {
-        return isMoving;
     }
 }
