@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounterManager : MonoBehaviour, KitchenObjectsParent
+public class CountainerCounterManager : MonoBehaviour, KitchenObjectsParent
 {
     [SerializeField] KitchenScriptableObject kitchenIngredientsSO;
     [SerializeField] GameObject spawnPos;

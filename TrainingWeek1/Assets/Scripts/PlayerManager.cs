@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour, KitchenObjectsParent
 {
     public static PlayerManager instance { get; private set; }
     public event EventHandler <ChangeSelectedCounterEventArgs> ChangeSelectedCounterEvent;
@@ -14,9 +14,11 @@ public class PlayerManager : MonoBehaviour
 
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] LayerMask clearCounterMask;
+    [SerializeField] GameObject spawnPos;
 
     PlayerInput gameInput;
     ClearCounterManager clearCounterSelect;
+    KitchenObjects kitchenObjects;
 
     Vector3 playerLastInteractDir;
     
@@ -39,7 +41,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (clearCounterSelect != null)
         {
-            clearCounterSelect.Interact();
+            clearCounterSelect.Interaction(this);
         }
     }
 
@@ -133,5 +135,30 @@ public class PlayerManager : MonoBehaviour
         this.clearCounterSelect = clearCounterSelect;
 
         ChangeSelectedCounterEvent?.Invoke(this, new ChangeSelectedCounterEventArgs { clearCounterSelect = clearCounterSelect });
+    }
+
+    public Transform GetKitchenObjectFollowTransform()
+    {
+        return spawnPos.transform;
+    }
+
+    public KitchenObjects GetKitchenIngredient()
+    {
+        return kitchenObjects;
+    }
+
+    public void ClearKitchenIngredient()
+    {
+        kitchenObjects = null;
+    }
+
+    public void SetKitchenIngredient(KitchenObjects kitchenObject)
+    {
+        this.kitchenObjects = kitchenObject;
+    }
+
+    public bool HasKitchenIngredient()
+    {
+        return kitchenObjects != null;
     }
 }
