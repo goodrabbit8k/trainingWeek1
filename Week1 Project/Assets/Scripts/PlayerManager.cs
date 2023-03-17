@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour, IKitchenIngredientParent
     public event EventHandler <OnSelectedCounterEventArgs> OnSelectedCounter;
     public class OnSelectedCounterEventArgs : EventArgs
     {
-        public ClearCounterManager selectedCounter;
+        public BaseCounter selectedCounter;
     }
 
     [SerializeField] PlayerInput playerInput;
@@ -18,7 +18,7 @@ public class PlayerManager : MonoBehaviour, IKitchenIngredientParent
     [SerializeField] LayerMask countersLayerMask;
     [SerializeField] GameObject holdPoint;
 
-    ClearCounterManager selectedCounter;
+    BaseCounter selectedCounter;
     KitchenIngredient kitchenIngredient;
     Vector3 lastInteractDirection;
     bool isMoving;
@@ -69,11 +69,11 @@ public class PlayerManager : MonoBehaviour, IKitchenIngredientParent
         float interactDistance = 1f;
         if (Physics.Raycast(transform.position, lastInteractDirection, out RaycastHit raycastHit, interactDistance, countersLayerMask))
         {
-            if (raycastHit.transform.TryGetComponent(out ClearCounterManager clearCounter))
+            if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
             {
-                if (clearCounter != selectedCounter)
+                if (baseCounter != selectedCounter)
                 {
-                    SetSelectedCounter(clearCounter);
+                    SetSelectedCounter(baseCounter);
                 }
             }
             else
@@ -131,7 +131,7 @@ public class PlayerManager : MonoBehaviour, IKitchenIngredientParent
         transform.forward = Vector3.Slerp(transform.forward, movementDirection, rotationSpeed * Time.deltaTime);
     }
 
-    public void SetSelectedCounter(ClearCounterManager selectedCounter)
+    public void SetSelectedCounter(BaseCounter selectedCounter)
     {
         this.selectedCounter = selectedCounter;
 
