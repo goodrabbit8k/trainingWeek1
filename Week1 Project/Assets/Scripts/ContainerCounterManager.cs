@@ -11,9 +11,12 @@ public class ContainerCounterManager : BaseCounter
 
     public override void Interaction(PlayerManager player)
     {
-        Transform kitchenIngredientSpawnPos = Instantiate(kitchenIngredientSO.prefab);
-        kitchenIngredientSpawnPos.GetComponent<KitchenIngredient>().SetKitchenIngredientParent(player);
+        if (!player.HasKitchenIngredient())
+        {
+            Transform kitchenIngredientSpawnPos = Instantiate(kitchenIngredientSO.prefab);
+            kitchenIngredientSpawnPos.GetComponent<KitchenIngredient>().SetKitchenIngredientParent(player);
 
-        onPlayerHoldingIngredient.Invoke(this, EventArgs.Empty);
+            onPlayerHoldingIngredient.Invoke(this, EventArgs.Empty);
+        }
     }
 }
