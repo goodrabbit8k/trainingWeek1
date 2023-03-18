@@ -13,6 +13,11 @@ public class BaseCounter : MonoBehaviour, IKitchenIngredientParent
         Debug.Log("BaseCounter.Interaction();");
     }
 
+    public virtual void InteractionAlternate(PlayerManager player)
+    {
+        //Debug.Log("BaseCounter.InteractionAlternate();");
+    }
+
     public Transform GetKitchenIngredientFollowSpawnPoint()
     {
         return spawnPoint.transform;

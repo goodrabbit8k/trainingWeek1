@@ -13,8 +13,7 @@ public class ContainerCounterManager : BaseCounter
     {
         if (!player.HasKitchenIngredient())
         {
-            Transform kitchenIngredientSpawnPos = Instantiate(kitchenIngredientSO.prefab);
-            kitchenIngredientSpawnPos.GetComponent<KitchenIngredient>().SetKitchenIngredientParent(player);
+            KitchenIngredient.SpawnKitchenIngredient(kitchenIngredientSO, player);
 
             onPlayerHoldingIngredient.Invoke(this, EventArgs.Empty);
         }
