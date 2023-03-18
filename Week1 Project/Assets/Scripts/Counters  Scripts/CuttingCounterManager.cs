@@ -3,17 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CuttingCounterManager : BaseCounter
+public class CuttingCounterManager : BaseCounter, IHasProcess
 {
 
     [SerializeField] CuttingRecipeSO[] cuttingRecipeSOArray;
 
-    public event EventHandler<onProcessChangeEventArgs> onProcessChange;
+    public event EventHandler<IHasProcess.onProcessChangeEventArgs> onProcessChange;
     public event EventHandler onCutting;
-    public class onProcessChangeEventArgs : EventArgs
-    {
-        public float processNormalized;
-    }
 
     float cuttingProcess;
 
@@ -29,7 +25,7 @@ public class CuttingCounterManager : BaseCounter
                     cuttingProcess = 0;
 
                     CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenIngredient().GetKitchenIngredientSO());
-                    onProcessChange?.Invoke(this, new onProcessChangeEventArgs { processNormalized = cuttingProcess / cuttingRecipeSO.maximumCuttingProcess });
+                    onProcessChange?.Invoke(this, new IHasProcess.onProcessChangeEventArgs { processNormalized = cuttingProcess / cuttingRecipeSO.maximumCuttingProcess });
                 }
             }
             else
@@ -58,7 +54,7 @@ public class CuttingCounterManager : BaseCounter
             onCutting?.Invoke(this, EventArgs.Empty);
             CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenIngredient().GetKitchenIngredientSO());
 
-            onProcessChange?.Invoke(this, new onProcessChangeEventArgs { processNormalized = cuttingProcess / cuttingRecipeSO.maximumCuttingProcess });
+            onProcessChange?.Invoke(this, new IHasProcess.onProcessChangeEventArgs { processNormalized = cuttingProcess / cuttingRecipeSO.maximumCuttingProcess });
 
             if (cuttingProcess >= cuttingRecipeSO.maximumCuttingProcess)
             {
