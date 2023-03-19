@@ -1,9 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseCounter : MonoBehaviour, IKitchenIngredientParent
 {
+    public static event EventHandler OnAnyIngredientPlacedHere;
+
+    public static void ResetStaticData()
+    {
+        OnAnyIngredientPlacedHere = null;
+    }
+
     [SerializeField] GameObject spawnPoint;
 
     KitchenIngredient kitchenIngredient;
@@ -26,6 +34,11 @@ public class BaseCounter : MonoBehaviour, IKitchenIngredientParent
     public void SetKitchenIngredient(KitchenIngredient kitchenIngredient)
     {
         this.kitchenIngredient = kitchenIngredient;
+
+        if (kitchenIngredient != null)
+        {
+            OnAnyIngredientPlacedHere?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public KitchenIngredient GetKitchenIngredient()

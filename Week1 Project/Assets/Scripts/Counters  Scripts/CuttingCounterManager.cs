@@ -8,6 +8,13 @@ public class CuttingCounterManager : BaseCounter, IHasProcess
 
     [SerializeField] CuttingRecipeSO[] cuttingRecipeSOArray;
 
+    public static event EventHandler OnAnyCut;
+
+    new public static void ResetStaticData()
+    {
+        OnAnyCut = null;
+    }
+
     public event EventHandler<IHasProcess.onProcessChangeEventArgs> onProcessChange;
     public event EventHandler onCutting;
 
@@ -58,6 +65,7 @@ public class CuttingCounterManager : BaseCounter, IHasProcess
         {
             cuttingProcess++;
             onCutting?.Invoke(this, EventArgs.Empty);
+            OnAnyCut?.Invoke(this, EventArgs.Empty);
             CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenIngredient().GetKitchenIngredientSO());
 
             onProcessChange?.Invoke(this, new IHasProcess.onProcessChangeEventArgs { processNormalized = cuttingProcess / cuttingRecipeSO.maximumCuttingProcess });
