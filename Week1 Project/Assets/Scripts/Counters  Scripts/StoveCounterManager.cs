@@ -108,7 +108,19 @@ public class StoveCounterManager : BaseCounter, IHasProcess
         {
             if (player.HasKitchenIngredient())
             {
+                if (player.GetKitchenIngredient().TryGetPlate(out PlateKitchenIngredient plateKitchenIngredient))
+                {
+                    if (plateKitchenIngredient.TryAddIngredient(GetKitchenIngredient().GetKitchenIngredientSO()))
+                    {
+                        GetKitchenIngredient().DestroyIngredient();
 
+                        state = State.Idle;
+
+                        OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
+
+                        onProcessChange?.Invoke(this, new IHasProcess.onProcessChangeEventArgs { processNormalized = 0f });
+                    }
+                }
             }
             else
             {

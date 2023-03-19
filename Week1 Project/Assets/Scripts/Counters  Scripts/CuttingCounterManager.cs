@@ -37,7 +37,13 @@ public class CuttingCounterManager : BaseCounter, IHasProcess
         {
             if (player.HasKitchenIngredient())
             {
-
+                if (player.GetKitchenIngredient().TryGetPlate(out PlateKitchenIngredient plateKitchenIngredient))
+                {
+                    if (plateKitchenIngredient.TryAddIngredient(GetKitchenIngredient().GetKitchenIngredientSO()))
+                    {
+                        GetKitchenIngredient().DestroyIngredient();
+                    }
+                }
             }
             else
             {
