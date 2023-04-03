@@ -10,6 +10,14 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
+# Ignore everything in the root directory
+/*
+
+# Except for these files and folders
+!/Assets/
+!/Packages/
+!/ProjectSettings/
+
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 
